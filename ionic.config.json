@@ -1,0 +1,7 @@
+{
+  "name": "three-step-wallet2",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
