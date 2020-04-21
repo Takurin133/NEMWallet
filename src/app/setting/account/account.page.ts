@@ -9,16 +9,18 @@ import { IAccount, AccountService } from '../account.service';
 })
 export class AccountPage implements OnInit {
 
-  account: IAccount = {
-    multisigPublicKey: null,
-    initiatorPrivateKey: null,
-    parentTel: null,
-  };
-
   constructor(
     public accountService: AccountService,
     public modalController: ModalController,
   ) { }
+
+  account: IAccount = {
+    multisigPublicKey: null,
+    initiatorPrivateKey: null,
+    parentTel: null,
+    contact: null,
+  };
+t;
 
   ngOnInit() {
   }
@@ -27,6 +29,10 @@ export class AccountPage implements OnInit {
     const account = this.accountService.getAccount();
     if (account) {
       this.account = account;
+    }
+
+    if (!this.account.contact) {
+      this.account.contact = 'tel';
     }
   }
 
@@ -37,6 +43,9 @@ export class AccountPage implements OnInit {
 
   dismissModalController() {
     this.modalController.dismiss();
+  }
+  onChange(event) {
+    this.account.contact = event.target.value;
   }
 
 }

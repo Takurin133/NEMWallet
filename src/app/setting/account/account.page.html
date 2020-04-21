@@ -29,6 +29,13 @@
         <ion-label position="floating">承認者電話番号</ion-label>
         <ion-input type="tel" [(ngModel)]="account.parentTel" required name="tel"></ion-input>
       </ion-item>
+      <ion-item>
+        <ion-label>連絡方法</ion-label>
+        <ion-select [value]="account.contact" (ionChange)="onChange($event)">
+          <ion-select-option value="tel">電話</ion-select-option>
+          <ion-select-option value="sms">SMS</ion-select-option>
+        </ion-select>
+      </ion-item>
     </ion-list>
   </form>
 </ion-content>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
@@ -8,6 +9,7 @@ import { Account, NetworkType, TransferTransaction, Deadline,
   PublicAccount, AggregateTransaction, HashLockTransaction,
   TransactionService, RepositoryFactoryHttp, Listener, NamespaceId, MosaicService } from 'symbol-sdk';
 import { mergeMap, filter } from 'rxjs/operators';
+import { IAccount, AccountService } from '../setting/account.service';
 
 @Component({
   selector: 'app-tab1',
@@ -24,11 +26,12 @@ export class Tab1Page {
     data: { payload: string }
   };
   transferTx: TransferTransaction;
-  multsigAccountPubKey = '2591ACAE34EE6044C4197DCC763DAC20C5CDEAE09DB5E32AB72DC4B5B943AB8A';
-  endPoint = 'https://sym-test.opening-line.jp:3001';
-  repository = new RepositoryFactoryHttp(this.endPoint);
+  endPoint: string;
+  repository: RepositoryFactoryHttp;
   amount = 0;
   smsMessage = '';
+  networkType: NetworkType;
+  account: IAccount;
 
   constructor(
     public barcodeScanner: BarcodeScanner,
@@ -36,19 +39,26 @@ export class Tab1Page {
     public callNumber: CallNumber,
     public alertController: AlertController,
     public sms: SMS,
-  ) {}
+    public accountService: AccountService,
+  ) {
+    this.endPoint = environment.node.endPoint;
+    this.networkType = environment.node.networkType;
+    this.repository = new RepositoryFactoryHttp(this.endPoint);
+    this.account = accountService.getAccount();
+  }
 
   ionViewDidEnter() {
+    this.account = this.accountService.getAccount();
     this.getAccountXym();
   }
 
   getAccountXym() {
-    const multisigAddress = Address.createFromPublicKey(this.multsigAccountPubKey, NetworkType.TEST_NET);
+    const multisigAddress = Address.createFromPublicKey(this.account.multisigPublicKey, this.networkType);
     const mosaicService = new MosaicService(this.repository.createAccountRepository(), this.repository.createMosaicRepository());
     mosaicService.mosaicsAmountViewFromAddress(multisigAddress)
     .pipe(
       mergeMap((_) => _),
-      filter((m) => m.fullName() === '747B276C30626442')
+      filter((m) => m.fullName() === environment.currencyId)
     ).subscribe((m) => {
       this.amount = m.relativeAmount();
     });
@@ -102,7 +112,7 @@ export class Tab1Page {
     let amount: number = null;
     if (this.transferTx) {
       const sym = this.transferTx.mosaics.find((m) => {
-        return m.id.toHex() === '747B276C30626442';
+        return m.id.toHex() === environment.currencyId;
       });
       if (sym) {
         const absolute = Number(sym.amount.toString());
@@ -122,8 +132,8 @@ export class Tab1Page {
 
 
   async payXym() {
-    const cosignatoryPrivateKey = '8458373A2CC9FC919D1E339E0D21B3313C7460EC2EC28875E53E8CA9A8B79B31';
-    const genHash = '44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C';
+    const cosignatoryPrivateKey = this.account.initiatorPrivateKey;
+    const genHash = environment.node.generationHash;
 
     const wsEndpoint = this.endPoint.replace('http', 'ws');
 
@@ -131,10 +141,10 @@ export class Tab1Page {
     const receiptRep = this.repository.createReceiptRepository();
     const listener = new Listener(wsEndpoint, WebSocket);
 
-    const networkType = NetworkType.TEST_NET;
+    const networkType = this.networkType;
 
     const cosignatory = Account.createFromPrivateKey(cosignatoryPrivateKey, networkType);
-    const multisig = PublicAccount.createFromPublicKey(this.multsigAccountPubKey, networkType);
+    const multisig = PublicAccount.createFromPublicKey(this.account.multisigPublicKey, networkType);
 
     const aggregateTx = AggregateTransaction.createBonded(
       Deadline.create(),
@@ -194,8 +204,11 @@ export class Tab1Page {
         {
           text: 'れんらくする',
           handler: () => {
-            // this.callPhone();
-            this.sendSMS();
+            if (this.account.contact === 'tel') {
+              this.callPhone();
+            } else {
+              this.sendSMS();
+            }
           }
         }
       ]
@@ -204,13 +217,13 @@ export class Tab1Page {
   }
 
   callPhone() {
-    this.callNumber.callNumber('09012345678', true).then(
+    this.callNumber.callNumber(this.account.parentTel, true).then(
       (res) => { console.log(`Lunched dialer: ${res}`); }
     ).catch((e) => { console.error(`Failed lunched dialer: ${e}`); });
   }
 
   sendSMS() {
-    this.sms.send('09012345678', this.smsMessage).then();
+    this.sms.send(this.account.parentTel, this.smsMessage).then();
     this.smsMessage = null;
   }
 

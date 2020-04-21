@@ -4,6 +4,7 @@ export interface IAccount {
   multisigPublicKey: string;
   initiatorPrivateKey: string;
   parentTel: string;
+  contact: string;
 }
 
 @Injectable({
@@ -14,7 +15,9 @@ export class AccountService {
 
   getAccount(): IAccount {
     if ('account' in localStorage) {
-      return JSON.parse(localStorage.account);
+      const account: IAccount = JSON.parse(localStorage.account);
+      console.log(account.contact);
+      return account;
     }
     return null;
   }
