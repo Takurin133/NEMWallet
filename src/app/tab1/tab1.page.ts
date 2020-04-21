@@ -4,7 +4,8 @@ import { LoadingController } from '@ionic/angular';
 import { Account, NetworkType, TransferTransaction, Deadline,
   Address, NetworkCurrencyPublic, UInt64,
   PublicAccount, AggregateTransaction, HashLockTransaction,
-  TransactionService, RepositoryFactoryHttp, Listener, NamespaceId } from 'symbol-sdk';
+  TransactionService, RepositoryFactoryHttp, Listener, NamespaceId, MosaicService } from 'symbol-sdk';
+import { mergeMap, filter } from 'rxjs/operators';
 
 
 @Component({
@@ -22,11 +23,31 @@ export class Tab1Page {
     data: { payload: string }
   };
   transferTx: TransferTransaction;
+  multsigAccountPubKey = '2591ACAE34EE6044C4197DCC763DAC20C5CDEAE09DB5E32AB72DC4B5B943AB8A';
+  endPoint = 'https://sym-test.opening-line.jp:3001';
+  repository = new RepositoryFactoryHttp(this.endPoint);
+  amount = 0;
 
   constructor(
     public barcodeScanner: BarcodeScanner,
     public loadingControler: LoadingController,
   ) {}
+
+  ionViewDidEnter() {
+    this.getAccountXym();
+  }
+
+  getAccountXym() {
+    const multisigAddress = Address.createFromPublicKey(this.multsigAccountPubKey, NetworkType.TEST_NET);
+    const mosaicService = new MosaicService(this.repository.createAccountRepository(), this.repository.createMosaicRepository());
+    mosaicService.mosaicsAmountViewFromAddress(multisigAddress)
+    .pipe(
+      mergeMap((_) => _),
+      filter((m) => m.fullName() === '747B276C30626442')
+    ).subscribe((m) => {
+      this.amount = m.relativeAmount();
+    });
+  }
 
   runQRScanner() {
     this.barcodeScanner.scan().then((barcodeData: BarcodeScanResult) => {
@@ -54,7 +75,6 @@ export class Tab1Page {
     const tx = TransferTransaction.createFromPayload(payload);
     if (tx.type === 0x4154) {
       this.transferTx = tx as TransferTransaction;
-      console.log(this.transferTx);
     }
   }
 
@@ -98,21 +118,18 @@ export class Tab1Page {
 
   async payXym() {
     const cosignatoryPrivateKey = '8458373A2CC9FC919D1E339E0D21B3313C7460EC2EC28875E53E8CA9A8B79B31';
-    const multisigPublicKey = '2591ACAE34EE6044C4197DCC763DAC20C5CDEAE09DB5E32AB72DC4B5B943AB8A';
     const genHash = '44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C';
 
-    const endPoint = 'https://sym-test.opening-line.jp:3001';
-    const wsEndpoint = endPoint.replace('http', 'ws');
-    const repository = new RepositoryFactoryHttp(endPoint);
+    const wsEndpoint = this.endPoint.replace('http', 'ws');
 
-    const transactionRep = repository.createTransactionRepository();
-    const receiptRep = repository.createReceiptRepository();
+    const transactionRep = this.repository.createTransactionRepository();
+    const receiptRep = this.repository.createReceiptRepository();
     const listener = new Listener(wsEndpoint, WebSocket);
 
     const networkType = NetworkType.TEST_NET;
 
     const cosignatory = Account.createFromPrivateKey(cosignatoryPrivateKey, networkType);
-    const multisig = PublicAccount.createFromPublicKey(multisigPublicKey, networkType);
+    const multisig = PublicAccount.createFromPublicKey(this.multsigAccountPubKey, networkType);
 
     const aggregateTx = AggregateTransaction.createBonded(
       Deadline.create(),
@@ -159,6 +176,7 @@ export class Tab1Page {
     listener.close();
     this.transferTx = null;
     loading.dismiss();
+    this.getAccountXym();
   }
 
 }
