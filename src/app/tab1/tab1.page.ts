@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { Account, NetworkType, TransferTransaction, Deadline,
   Address, NetworkCurrencyPublic, UInt64,
@@ -27,12 +28,14 @@ export class Tab1Page {
   endPoint = 'https://sym-test.opening-line.jp:3001';
   repository = new RepositoryFactoryHttp(this.endPoint);
   amount = 0;
+  smsMessage = '';
 
   constructor(
     public barcodeScanner: BarcodeScanner,
     public loadingControler: LoadingController,
     public callNumber: CallNumber,
     public alertController: AlertController,
+    public sms: SMS,
   ) {}
 
   ionViewDidEnter() {
@@ -162,6 +165,7 @@ export class Tab1Page {
     listener.open().then(() => {
       transactionService.announceHashLockAggregateBonded(signedHashLockTx, signedAggregateTx, listener).subscribe((x) => {
         console.log(x);
+        this.smsMessage = this.message();
         this.resetPayStatus(listener, loading);
         this.showSendTxMessage().then();
       }, (err) => {
@@ -190,7 +194,8 @@ export class Tab1Page {
         {
           text: 'れんらくする',
           handler: () => {
-            this.callPhone();
+            // this.callPhone();
+            this.sendSMS();
           }
         }
       ]
@@ -202,6 +207,11 @@ export class Tab1Page {
     this.callNumber.callNumber('09012345678', true).then(
       (res) => { console.log(`Lunched dialer: ${res}`); }
     ).catch((e) => { console.error(`Failed lunched dialer: ${e}`); });
+  }
+
+  sendSMS() {
+    this.sms.send('09012345678', this.smsMessage).then();
+    this.smsMessage = null;
   }
 
 }
