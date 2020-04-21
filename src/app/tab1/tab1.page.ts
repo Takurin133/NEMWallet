@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
-import { LoadingController } from '@ionic/angular';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { Account, NetworkType, TransferTransaction, Deadline,
   Address, NetworkCurrencyPublic, UInt64,
   PublicAccount, AggregateTransaction, HashLockTransaction,
   TransactionService, RepositoryFactoryHttp, Listener, NamespaceId, MosaicService } from 'symbol-sdk';
 import { mergeMap, filter } from 'rxjs/operators';
-
 
 @Component({
   selector: 'app-tab1',
@@ -31,6 +31,8 @@ export class Tab1Page {
   constructor(
     public barcodeScanner: BarcodeScanner,
     public loadingControler: LoadingController,
+    public callNumber: CallNumber,
+    public alertController: AlertController,
   ) {}
 
   ionViewDidEnter() {
@@ -97,7 +99,7 @@ export class Tab1Page {
     let amount: number = null;
     if (this.transferTx) {
       const sym = this.transferTx.mosaics.find((m) => {
-        return m.id.id.toHex() === '747B276C30626442';
+        return m.id.toHex() === '747B276C30626442';
       });
       if (sym) {
         const absolute = Number(sym.amount.toString());
@@ -161,6 +163,7 @@ export class Tab1Page {
       transactionService.announceHashLockAggregateBonded(signedHashLockTx, signedAggregateTx, listener).subscribe((x) => {
         console.log(x);
         this.resetPayStatus(listener, loading);
+        this.showSendTxMessage().then();
       }, (err) => {
         console.error(err);
         this.resetPayStatus(listener, loading);
@@ -177,6 +180,28 @@ export class Tab1Page {
     this.transferTx = null;
     loading.dismiss();
     this.getAccountXym();
+  }
+
+  async showSendTxMessage() {
+    const alert = await this.alertController.create({
+      header: '送金依頼完了',
+      message: 'しょうにんいらいをおくったよ。おかあさんかおとうさんにれんらくしよう',
+      buttons: [
+        {
+          text: 'れんらくする',
+          handler: () => {
+            this.callPhone();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  callPhone() {
+    this.callNumber.callNumber('09012345678', true).then(
+      (res) => { console.log(`Lunched dialer: ${res}`); }
+    ).catch((e) => { console.error(`Failed lunched dialer: ${e}`); });
   }
 
 }
