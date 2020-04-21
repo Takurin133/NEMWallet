@@ -17,6 +17,30 @@
     </ion-item>
   </ion-card>
   <div class="ion-padding-horizontal">
-    <ion-button expand="block" (click)="sendSymMock()">おかいものをする</ion-button>
+    <ion-button expand="block" (click)="runQRScanner()" *ngIf="!transferTx">おかいものをする</ion-button>
+  </div>
+  <ion-card *ngIf="transferTx">
+    <ion-card-header>
+      <ion-card-title>おかねをはらう</ion-card-title>
+    </ion-card-header>
+    <ion-item>
+      <ion-label>しはらいさき</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-note slot="end">{{ recipientAddress() }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>きんがく</ion-label>
+      <ion-note slot="end">{{ payAmount() }} xym</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>メッセージ</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-note>{{ message() }}</ion-note>
+    </ion-item>
+  </ion-card>
+  <div class="ion-padding-horizontal">
+    <ion-button expand="block" (click)="(payXym())" *ngIf="transferTx">しはらう</ion-button>
   </div>
 </ion-content>
