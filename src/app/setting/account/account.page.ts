@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { IAccount, AccountService } from '../account.service';
+import { IAccount, AccountService } from '../../service/account.service';
 
 @Component({
   selector: 'app-account',

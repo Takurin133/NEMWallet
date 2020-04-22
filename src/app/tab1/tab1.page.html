@@ -27,17 +27,17 @@
       <ion-label>しはらいさき</ion-label>
     </ion-item>
     <ion-item>
-      <ion-note slot="end">{{ recipientAddress() }}</ion-note>
+      <ion-note slot="end">{{ txInfo.recipient }}</ion-note>
     </ion-item>
     <ion-item>
       <ion-label>きんがく</ion-label>
-      <ion-note slot="end">{{ payAmount() }} xym</ion-note>
+      <ion-note slot="end">{{ txInfo.amount }} xym</ion-note>
     </ion-item>
     <ion-item>
       <ion-label>メッセージ</ion-label>
     </ion-item>
     <ion-item>
-      <ion-note>{{ message() }}</ion-note>
+      <ion-note>{{ txInfo.message }}</ion-note>
     </ion-item>
   </ion-card>
   <div class="ion-padding-horizontal">
