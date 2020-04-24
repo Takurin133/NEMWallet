@@ -4,8 +4,8 @@ import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { LoadingController, AlertController } from '@ionic/angular';
-import { NetworkType, TransferTransaction, Address, RepositoryFactoryHttp, Listener } from 'symbol-sdk';
-import { IAccount, AccountService } from '../service/account.service';
+import { NetworkType, TransferTransaction, Address, Listener } from 'symbol-sdk';
+import { IAccount, TSAccountService } from '../service/tsaccount.service';
 import { SymbolService, ITxInfo } from '../service/symbol.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class Tab1Page {
     public callNumber: CallNumber,
     public alertController: AlertController,
     public sms: SMS,
-    public accountService: AccountService,
+    public accountService: TSAccountService,
     public symbolService: SymbolService,
   ) {
     this.endPoint = environment.node.endPoint;

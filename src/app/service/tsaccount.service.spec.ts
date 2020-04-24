@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AccountService } from './account.service';
+import { TSAccountService } from './tsaccount.service';
 
 describe('AccountService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
     // tslint:disable-next-line: deprecation
-    const service: AccountService = TestBed.get(AccountService);
+    const service: TSAccountService = TestBed.get(TSAccountService);
     expect(service).toBeTruthy();
   });
 });
