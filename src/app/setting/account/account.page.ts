@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, AlertController, ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { IAccount, TSAccountService } from '../../service/tsaccount.service';
 import { SymbolService } from 'src/app/service/symbol.service';
 
