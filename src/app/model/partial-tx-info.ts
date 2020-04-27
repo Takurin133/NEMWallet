@@ -1,16 +1,14 @@
-import { IConfirmedTxInfo } from '../interface/confirmed-tx-info';
-import { AggregateTransaction } from 'symbol-sdk';
-import { LocalDateTime } from 'js-joda';
+import { IPartialTxInfo } from '../interface/partial-tx-info';
 import { InnerTxInfo } from './inner-tx-info';
+import { LocalDateTime } from 'js-joda';
+import { AggregateTransaction } from 'symbol-sdk';
 
-export class ConfirmedTxInfo implements IConfirmedTxInfo {
-  height: number;
+export class PartialTxInfo implements IPartialTxInfo {
   deadline: LocalDateTime;
   id: string;
   innerTransactions: InnerTxInfo[];
 
   private constructor(aggregateTx: AggregateTransaction) {
-    this.height = Number(aggregateTx.transactionInfo.height.toString());
     this.deadline = aggregateTx.deadline.value;
     this.id = aggregateTx.transactionInfo.id;
     const innerTxInfo: InnerTxInfo[] = [];
@@ -22,6 +20,6 @@ export class ConfirmedTxInfo implements IConfirmedTxInfo {
   }
 
   public static txInfoFromAggregateTx(aggregateTx: AggregateTransaction) {
-    return new ConfirmedTxInfo(aggregateTx);
+    return new PartialTxInfo(aggregateTx);
   }
 }

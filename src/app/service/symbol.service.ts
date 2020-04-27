@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { mergeMap, first, filter, map, toArray } from 'rxjs/operators';
 import { Observable, from, of, pipe } from 'rxjs';
 import { ConfirmedTxInfo } from '../model/confirmed-tx-info';
+import { PartialTxInfo } from '../model/partial-tx-info';
 
 export interface ITxInfo {
   recipient: string;
@@ -116,12 +117,26 @@ export class SymbolService {
       mergeMap((_) => _),
       filter((t) => t.type === TransactionType.AGGREGATE_BONDED),
       map((t) => t as AggregateTransaction),
-      map((t) =>  this.parseConfirmedTx(t) ),
+      map((t) =>  this.parseConfirmedTx(t)),
       toArray()
     );
   }
 
-  parseConfirmedTx(tx: AggregateTransaction) {
+  private parseConfirmedTx(tx: AggregateTransaction): ConfirmedTxInfo {
     return ConfirmedTxInfo.txInfoFromAggregateTx(tx);
+  }
+
+  getPartialTxs(address: Address): Observable<PartialTxInfo[]> {
+    const accountRepository = this.repositoryFactory.createAccountRepository();
+    return accountRepository.getAccountPartialTransactions(address).pipe(
+      mergeMap((_) => _),
+      map((t) => t as AggregateTransaction),
+      map((t) => this.parsePartialTx(t)),
+      toArray()
+    );
+  }
+
+  private parsePartialTx(tx: AggregateTransaction): PartialTxInfo {
+    return PartialTxInfo.txInfoFromAggregateTx(tx);
   }
 }

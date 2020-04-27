@@ -4,6 +4,7 @@ import { AccountService, PublicAccount, AggregateTransaction } from 'symbol-sdk'
 import { TSAccountService } from '../service/tsaccount.service';
 import { environment } from 'src/environments/environment';
 import { ConfirmedTxInfo } from '../model/confirmed-tx-info';
+import { PartialTxInfo } from '../model/partial-tx-info';
 
 @Component({
   selector: 'app-tab2',
@@ -14,6 +15,7 @@ export class Tab2Page {
 
   multisigAccount: PublicAccount;
   confirmTxs: ConfirmedTxInfo[];
+  partialTxs: PartialTxInfo[];
 
   constructor(
     public accountService: TSAccountService,
@@ -23,6 +25,7 @@ export class Tab2Page {
   ionViewDidEnter() {
     this.setMultisigAccount();
     this.getConfirmTxs();
+    this.getPartialTxs();
   }
 
   setMultisigAccount() {
@@ -35,8 +38,16 @@ export class Tab2Page {
   getConfirmTxs() {
     this.symbolService.getConfirmTxs(this.multisigAccount.address).subscribe(
       (txs) => {
-        console.log(txs);
         this.confirmTxs = txs;
+      }
+    );
+  }
+
+  getPartialTxs() {
+    this.symbolService.getPartialTxs(this.multisigAccount.address).subscribe(
+      (txs) => {
+        console.log(txs);
+        this.partialTxs = txs;
       }
     );
   }
