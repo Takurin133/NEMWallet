@@ -139,4 +139,26 @@ export class SymbolService {
   private parsePartialTx(tx: AggregateTransaction): PartialTxInfo {
     return PartialTxInfo.txInfoFromAggregateTx(tx);
   }
+
+  public async validateMultisigSetting(cosignatoryKey: string, multisigKey: string) {
+    const networkType = environment.node.networkType;
+    const multisigRepository = this.repositoryFactory.createMultisigRepository();
+
+    try {
+      const cosignatoryAccount = Account.createFromPrivateKey(cosignatoryKey, networkType);
+      const multisigAccount = PublicAccount.createFromPublicKey(multisigKey, networkType);
+      const result = await multisigRepository.getMultisigAccountInfo(multisigAccount.address).pipe(
+        map((m) => m.cosignatories),
+        mergeMap((_) => _),
+        first((c) => c.publicKey === cosignatoryAccount.publicKey)
+      ).toPromise();
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 }
