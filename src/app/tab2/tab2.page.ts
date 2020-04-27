@@ -59,5 +59,4 @@ export class Tab2Page {
   partialTxsTrackBy(index, item: PartialTxInfo) {
     return item.id;
   }
-
 }

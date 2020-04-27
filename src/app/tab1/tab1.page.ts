@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { NetworkType, TransferTransaction, Address, Listener } from 'symbol-sdk';
 import { IAccount, TSAccountService } from '../service/tsaccount.service';
 import { SymbolService, ITxInfo } from '../service/symbol.service';
+import { AccountPage } from '../setting/account/account.page';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page {
+export class Tab1Page implements OnInit {
   symbolQrData: {
     v: number,
     network_id: number,
@@ -36,10 +37,22 @@ export class Tab1Page {
     public sms: SMS,
     public accountService: TSAccountService,
     public symbolService: SymbolService,
+    public modalController: ModalController,
   ) {
     this.endPoint = environment.node.endPoint;
     this.networkType = environment.node.networkType;
     this.account = accountService.getAccount();
+  }
+
+  async ngOnInit() {
+    const account = this.accountService.getAccount();
+    if (!account) {
+      const modal = await this.modalController.create({
+        component: AccountPage,
+      });
+      await modal.present();
+      modal.onWillDismiss().then(() => this.ionViewDidEnter());
+    }
   }
 
   ionViewDidEnter() {
