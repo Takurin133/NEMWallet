@@ -10,37 +10,22 @@
   <ion-list>
     <ion-list-header>承認待ち</ion-list-header>
     <ion-card *ngFor="let tx of partialTxs">
-      <ion-card-header>
-        <ion-card-subtitle>{{ tx.id }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-item>
-        <ion-label>有効期限</ion-label>
-        <ion-note slot="end">{{ tx.deadline | date }}</ion-note>
-      </ion-item>
+      <app-tx-header
+        id="{{ tx.id }}"
+        deadline="{{ tx.deadline }}"
+        >
+      </app-tx-header>
       <div *ngFor="let itx of tx.innerTransactions">
         <div *ngIf="itx.sendXymTx()">
-          <ion-item>
-            <ion-label>宛先</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-note>{{ itx.recipient }}</ion-note>
-          </ion-item>
-          <ion-item>
-            <ion-label>金額</ion-label>
-            <ion-note slot="end">{{ itx.amount }} xym</ion-note>
-          </ion-item>
-          <div *ngIf="itx.message">
-            <ion-item>
-              <ion-label>メッセージ</ion-label>
-            </ion-item>
-            <ion-item>
-              <ion-note>{{ itx.message }}</ion-note>
-            </ion-item>
-          </div>
+          <app-inner-tx
+            recipient="{{ itx.recipient }}"
+            amount="{{ itx.amount }}"
+            message="{{ itx.message }}"
+            ></app-inner-tx>
         </div>
         <div *ngIf="!itx.sendXymTx()">
           <ion-item>
-            <ion-label>その他の操作</ion-label>
+            <app-other-inner-tx></app-other-inner-tx>
           </ion-item>
         </div>
       </div>
@@ -50,42 +35,22 @@
   <ion-list>
     <ion-list-header>承認済み</ion-list-header>
     <ion-card *ngFor="let tx of confirmTxs">
-      <ion-list-header>
-        <ion-card-subtitle>{{ tx.id }}</ion-card-subtitle>
-      </ion-list-header>
-      <ion-item>
-        <ion-label>ブロック高</ion-label>
-        <ion-note slot="end">{{ tx.height }}</ion-note>
-      </ion-item>
-      <ion-item>
-        <ion-label>有効期限</ion-label>
-        <ion-note slot="end">{{ tx.deadline | date }}</ion-note>
-      </ion-item>
+      <app-tx-header
+        id="{{ tx.id }}"
+        height="{{ tx.height }}"
+        deadline="{{ tx.deadline }}"
+        >
+      </app-tx-header>
       <div *ngFor="let itx of tx.innerTransactions">
         <div *ngIf="itx.sendXymTx()">
-          <ion-item>
-            <ion-label>宛先</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-note>{{ itx.recipient }}</ion-note>
-          </ion-item>
-          <ion-item>
-            <ion-label>金額</ion-label>
-            <ion-note slot="end">{{ itx.amount }} xym</ion-note>
-          </ion-item>
-          <div *ngIf="itx.message">
-            <ion-item>
-              <ion-label>メッセージ</ion-label>
-            </ion-item>
-            <ion-item>
-              <ion-note>{{ itx.message }}</ion-note>
-            </ion-item>
-          </div>
+          <app-inner-tx
+            recipient="{{ itx.recipient }}"
+            amount="{{ itx.amount }}"
+            message="{{ itx.message }}"
+            ></app-inner-tx>
         </div>
         <div *ngIf="!itx.sendXymTx()">
-          <ion-item>
-            <ion-label>その他の操作</ion-label>
-          </ion-item>
+          <app-other-inner-tx></app-other-inner-tx>
         </div>
       </div>
     </ion-card>
