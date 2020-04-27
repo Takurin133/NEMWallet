@@ -4,7 +4,7 @@ import { BarcodeScanner, BarcodeScanResult } from '@ionic-native/barcode-scanner
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { SMS } from '@ionic-native/sms/ngx';
 import { LoadingController, AlertController, ModalController } from '@ionic/angular';
-import { NetworkType, TransferTransaction, Address, Listener } from 'symbol-sdk';
+import { NetworkType, TransferTransaction, Address, Listener, TransactionType } from 'symbol-sdk';
 import { IAccount, TSAccountService } from '../service/tsaccount.service';
 import { SymbolService, ITxInfo } from '../service/symbol.service';
 import { AccountPage } from '../setting/account/account.page';
@@ -31,7 +31,7 @@ export class Tab1Page implements OnInit {
 
   constructor(
     public barcodeScanner: BarcodeScanner,
-    public loadingControler: LoadingController,
+    public loadingController: LoadingController,
     public callNumber: CallNumber,
     public alertController: AlertController,
     public sms: SMS,
@@ -92,7 +92,7 @@ export class Tab1Page implements OnInit {
 
   parsePayload(payload) {
     const tx = TransferTransaction.createFromPayload(payload);
-    if (tx.type === 0x4154) {
+    if (tx.type === TransactionType.TRANSFER) {
       this.transferTx = tx as TransferTransaction;
       this.txInfo = this.symbolService.parseTx(this.transferTx);
     }
@@ -102,7 +102,7 @@ export class Tab1Page implements OnInit {
     const wsEndpoint = this.endPoint.replace('http', 'ws');
     const listener = new Listener(wsEndpoint, WebSocket);
 
-    const loading = await this.loadingControler.create({
+    const loading = await this.loadingController.create({
       message: 'しはらいちゅう',
     });
 

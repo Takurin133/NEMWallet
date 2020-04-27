@@ -3,10 +3,10 @@ import { Address, RepositoryFactoryHttp, MosaicService,
   MosaicAmountView, TransferTransaction, Listener,
   NetworkType, Account, PublicAccount, AggregateTransaction,
   Deadline, HashLockTransaction, NetworkCurrencyPublic,
-  UInt64, TransactionService, AccountService, TransactionFilter, TransactionType, Transaction } from 'symbol-sdk';
+  UInt64, TransactionService, TransactionFilter, TransactionType } from 'symbol-sdk';
 import { environment } from 'src/environments/environment';
 import { mergeMap, first, filter, map, toArray } from 'rxjs/operators';
-import { Observable, from, of, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfirmedTxInfo } from '../model/confirmed-tx-info';
 import { PartialTxInfo } from '../model/partial-tx-info';
 
@@ -68,8 +68,8 @@ export class SymbolService {
       return m.id.toHex() === environment.currencyId;
     });
     if (xym) {
-      const absolut = Number(xym.amount.toString());
-      amount = absolut * Math.pow(10, -NetworkCurrencyPublic.DIVISIBILITY);
+      const absolute = Number(xym.amount.toString());
+      amount = absolute * Math.pow(10, -NetworkCurrencyPublic.DIVISIBILITY);
     }
     return amount;
   }
