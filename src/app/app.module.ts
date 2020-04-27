@@ -23,7 +23,6 @@ import { SMS } from '@ionic-native/sms/ngx';
     SMS,
     CallNumber,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: LOCALE_ID, useValue: navigator.language },
   ],
   bootstrap: [AppComponent]
 })
