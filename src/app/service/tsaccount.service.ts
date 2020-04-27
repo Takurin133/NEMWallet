@@ -10,7 +10,7 @@ export interface IAccount {
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService {
+export class TSAccountService {
   constructor() { }
 
   getAccount(): IAccount {

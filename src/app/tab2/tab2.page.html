@@ -7,11 +7,52 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list>
+    <ion-list-header>承認待ち</ion-list-header>
+    <ion-card *ngFor="let tx of partialTxs" href="http://explorer.symboldev.network/transaction/{{ tx.txHash }}">
+      <app-tx-header
+        hash="{{ tx.txHash }}"
+        deadline="{{ tx.deadline }}"
+        >
+      </app-tx-header>
+      <div *ngFor="let itx of tx.innerTransactions; trackBy: confirmTxsTrackBy">
+        <div *ngIf="itx.sendXymTx()">
+          <app-inner-tx
+            recipient="{{ itx.recipient }}"
+            amount="{{ itx.amount }}"
+            message="{{ itx.message }}"
+            ></app-inner-tx>
+        </div>
+        <div *ngIf="!itx.sendXymTx()">
+          <ion-item>
+            <app-other-inner-tx></app-other-inner-tx>
+          </ion-item>
+        </div>
+      </div>
+    </ion-card>
+  </ion-list>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-list>
+    <ion-list-header>承認済み</ion-list-header>
+    <ion-card *ngFor="let tx of confirmTxs; trackBy: partialTxsTrackBy" href="http://explorer.symboldev.network/transaction/{{ tx.txHash }}">
+      <app-tx-header
+        hash="{{ tx.txHash }}"
+        height="{{ tx.height }}"
+        deadline="{{ tx.deadline }}"
+        >
+      </app-tx-header>
+      <div *ngFor="let itx of tx.innerTransactions">
+        <div *ngIf="itx.sendXymTx()">
+          <app-inner-tx
+            recipient="{{ itx.recipient }}"
+            amount="{{ itx.amount }}"
+            message="{{ itx.message }}"
+            ></app-inner-tx>
+        </div>
+        <div *ngIf="!itx.sendXymTx()">
+          <app-other-inner-tx></app-other-inner-tx>
+        </div>
+      </div>
+    </ion-card>
+  </ion-list>
 </ion-content>

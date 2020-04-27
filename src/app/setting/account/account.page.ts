@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { IAccount, AccountService } from '../../service/account.service';
+import { IAccount, TSAccountService } from '../../service/tsaccount.service';
 
 @Component({
   selector: 'app-account',
@@ -10,7 +10,7 @@ import { IAccount, AccountService } from '../../service/account.service';
 export class AccountPage implements OnInit {
 
   constructor(
-    public accountService: AccountService,
+    public accountService: TSAccountService,
     public modalController: ModalController,
   ) { }
 

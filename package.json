@@ -33,6 +33,7 @@
     "call-number": "^1.0.1",
     "cordova-sms-plugin": "^1.0.0",
     "core-js": "^2.5.4",
+    "js-joda": "^1.11.0",
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "rxjs": "~6.5.1",
     "symbol-sdk": "^0.18.0",

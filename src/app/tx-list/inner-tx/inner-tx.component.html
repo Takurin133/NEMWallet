@@ -1,0 +1,20 @@
+<div>
+  <ion-item>
+    <ion-label>宛先</ion-label>
+  </ion-item>
+  <ion-item>
+    <ion-note>{{ recipient }}</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>金額</ion-label>
+    <ion-note slot="end">{{ amount }} xym</ion-note>
+  </ion-item>
+  <div *ngIf="message">
+    <ion-item>
+      <ion-label>メッセージ</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-note>{{ message }}</ion-note>
+    </ion-item>
+  </div>
+</div>

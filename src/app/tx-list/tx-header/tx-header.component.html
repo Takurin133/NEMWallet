@@ -1,0 +1,11 @@
+<ion-list-header>
+  <ion-card-subtitle>{{ hash | slice:0:20 }}</ion-card-subtitle>
+</ion-list-header>
+<ion-item *ngIf="height">
+  <ion-label>ブロック高</ion-label>
+  <ion-note slot="end">{{ height }}</ion-note>
+</ion-item>
+<ion-item>
+  <ion-label>有効期限</ion-label>
+  <ion-note slot="end">{{ deadline | date: "yyyy年MM月dd日 hh:mm:ss" }}</ion-note>
+</ion-item>

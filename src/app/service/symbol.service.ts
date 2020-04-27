@@ -3,10 +3,12 @@ import { Address, RepositoryFactoryHttp, MosaicService,
   MosaicAmountView, TransferTransaction, Listener,
   NetworkType, Account, PublicAccount, AggregateTransaction,
   Deadline, HashLockTransaction, NetworkCurrencyPublic,
-  UInt64, TransactionService } from 'symbol-sdk';
+  UInt64, TransactionService, AccountService, TransactionFilter, TransactionType, Transaction } from 'symbol-sdk';
 import { environment } from 'src/environments/environment';
-import { mergeMap, first } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { mergeMap, first, filter, map, toArray } from 'rxjs/operators';
+import { Observable, from, of, pipe } from 'rxjs';
+import { ConfirmedTxInfo } from '../model/confirmed-tx-info';
+import { PartialTxInfo } from '../model/partial-tx-info';
 
 export interface ITxInfo {
   recipient: string;
@@ -106,5 +108,35 @@ export class SymbolService {
     );
 
     return transactionService.announceHashLockAggregateBonded(signedHashLockTx, signedAggregateTx, listener);
+  }
+
+  getConfirmTxs(address: Address): Observable<ConfirmedTxInfo[]> {
+    const accountRepository = this.repositoryFactory.createAccountRepository();
+    const transactionFilter = new TransactionFilter({types: [TransactionType.AGGREGATE_BONDED] });
+    return accountRepository.getAccountTransactions(address, null, transactionFilter).pipe(
+      mergeMap((_) => _),
+      filter((t) => t.type === TransactionType.AGGREGATE_BONDED),
+      map((t) => t as AggregateTransaction),
+      map((t) =>  this.parseConfirmedTx(t)),
+      toArray()
+    );
+  }
+
+  private parseConfirmedTx(tx: AggregateTransaction): ConfirmedTxInfo {
+    return ConfirmedTxInfo.txInfoFromAggregateTx(tx);
+  }
+
+  getPartialTxs(address: Address): Observable<PartialTxInfo[]> {
+    const accountRepository = this.repositoryFactory.createAccountRepository();
+    return accountRepository.getAccountPartialTransactions(address).pipe(
+      mergeMap((_) => _),
+      map((t) => t as AggregateTransaction),
+      map((t) => this.parsePartialTx(t)),
+      toArray()
+    );
+  }
+
+  private parsePartialTx(tx: AggregateTransaction): PartialTxInfo {
+    return PartialTxInfo.txInfoFromAggregateTx(tx);
   }
 }
