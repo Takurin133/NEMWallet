@@ -9,13 +9,13 @@
 <ion-content [fullscreen]="true">
   <ion-list>
     <ion-list-header>承認待ち</ion-list-header>
-    <ion-card *ngFor="let tx of partialTxs">
+    <ion-card *ngFor="let tx of partialTxs" href="http://explorer.symboldev.network/transaction/{{ tx.txHash }}">
       <app-tx-header
-        id="{{ tx.id }}"
+        hash="{{ tx.txHash }}"
         deadline="{{ tx.deadline }}"
         >
       </app-tx-header>
-      <div *ngFor="let itx of tx.innerTransactions">
+      <div *ngFor="let itx of tx.innerTransactions; trackBy: confirmTxsTrackBy">
         <div *ngIf="itx.sendXymTx()">
           <app-inner-tx
             recipient="{{ itx.recipient }}"
@@ -34,9 +34,9 @@
 
   <ion-list>
     <ion-list-header>承認済み</ion-list-header>
-    <ion-card *ngFor="let tx of confirmTxs">
+    <ion-card *ngFor="let tx of confirmTxs; trackBy: partialTxsTrackBy" href="http://explorer.symboldev.network/transaction/{{ tx.txHash }}">
       <app-tx-header
-        id="{{ tx.id }}"
+        hash="{{ tx.txHash }}"
         height="{{ tx.height }}"
         deadline="{{ tx.deadline }}"
         >

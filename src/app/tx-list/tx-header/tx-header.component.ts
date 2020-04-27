@@ -8,7 +8,7 @@ import { LocalDateTime } from 'js-joda';
 })
 export class TxHeaderComponent implements OnInit {
 
-  @Input() id: string;
+  @Input() hash: string;
   @Input() deadline: LocalDateTime;
   @Input() height: number;
 

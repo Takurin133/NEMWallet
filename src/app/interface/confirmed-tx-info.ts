@@ -5,5 +5,6 @@ export interface IConfirmedTxInfo {
   height: number;
   deadline: LocalDateTime;
   id: string;
+  txHash: string;
   innerTransactions: InnerTxInfo[];
 }

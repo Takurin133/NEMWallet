@@ -1,5 +1,5 @@
 <ion-list-header>
-  <ion-card-subtitle>{{ id }}</ion-card-subtitle>
+  <ion-card-subtitle>{{ hash | slice:0:20 }}</ion-card-subtitle>
 </ion-list-header>
 <ion-item *ngIf="height">
   <ion-label>ブロック高</ion-label>

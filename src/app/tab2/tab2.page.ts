@@ -43,6 +43,10 @@ export class Tab2Page {
     );
   }
 
+  confirmTxsTrackBy(index, item: ConfirmedTxInfo) {
+    return item.id;
+  }
+
   getPartialTxs() {
     this.symbolService.getPartialTxs(this.multisigAccount.address).subscribe(
       (txs) => {
@@ -50,6 +54,10 @@ export class Tab2Page {
         this.partialTxs = txs;
       }
     );
+  }
+
+  partialTxsTrackBy(index, item: PartialTxInfo) {
+    return item.id;
   }
 
 }
