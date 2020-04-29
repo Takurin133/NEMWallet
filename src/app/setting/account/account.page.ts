@@ -22,8 +22,8 @@ export class AccountPage implements OnInit {
     initiatorPrivateKey: null,
     parentTel: null,
     contact: null,
+    language: null,
   };
-t;
 
   ngOnInit() {
   }
@@ -36,6 +36,10 @@ t;
 
     if (!this.account.contact) {
       this.account.contact = 'tel';
+    }
+
+    if (!this.account.language) {
+      this.account.language = 'lang';
     }
   }
 
@@ -65,8 +69,12 @@ t;
     this.modalController.dismiss();
   }
 
-  onChange(event) {
+  onCallChange(event) {
     this.account.contact = event.target.value;
+  }
+
+  onLanguageChange(event) {
+    this.account.language = event.target.value;
   }
 
 }

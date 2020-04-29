@@ -5,6 +5,7 @@ export interface IAccount {
   initiatorPrivateKey: string;
   parentTel: string;
   contact: string;
+  language: string;
 }
 
 @Injectable({
@@ -17,6 +18,7 @@ export class TSAccountService {
     if ('account' in localStorage) {
       const account: IAccount = JSON.parse(localStorage.account);
       console.log(account.contact);
+      console.log(account.language);
       return account;
     }
     return null;
